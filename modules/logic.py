@@ -7,7 +7,7 @@ class mine_field:
 
     def reset(self):
         self.alive = True
-        self.board = [[(0, 0) for _ in range(30)] for _ in range(16)]
+        self.board = [[(0, 0, 0) for _ in range(30)] for _ in range(16)]
         self.mines()
         self.add_numbers()
 
@@ -25,11 +25,19 @@ class mine_field:
         for n_row in range(16):
             for n_sq in range(30):
                 if self.board[n_row][n_sq][0] == 'B':
-                    self.board[n_row][n_sq] == ('B', 1)
+                    self.board[n_row][n_sq] = ('B', 1, 0)
+
+    def lock(self, row, square):
+        if self.board[row][square][2] == 1:
+            self.board[row][square] = (
+                self.board[row][square][0], self.board[row][square][1], 0)
+        else:
+            self.board[row][square] = (
+                self.board[row][square][0], self.board[row][square][1], 1)
 
     def onclick(self, row, square):
-        if self.alive and self.board[row][square][1] == 0:
-            self.board[row][square] = (self.board[row][square][0], 1)
+        if self.alive and self.board[row][square][1] == 0 and self.board[row][square][2] == 0:
+            self.board[row][square] = (self.board[row][square][0], 1, 1)
             if self.board[row][square][0] == 'B':
                 self.boom()
             elif self.board[row][square][0] == 0:
@@ -56,14 +64,14 @@ class mine_field:
             row = random.randint(0, 15)
             col = random.randint(0, 29)
             if self.board[row][col][0] == 0:
-                self.board[row][col] = ('B', 0)
+                self.board[row][col] = ('B', 0, 0)
                 n -= 1
 
     def add_numbers(self):
         for row in range(16):
             for cell in range(30):
                 if self.board[row][cell][0] == 0:
-                    self.board[row][cell] = (self.count_bombs(row, cell), 0)
+                    self.board[row][cell] = (self.count_bombs(row, cell), 0, 0)
 
     def count_bombs(self, row, cell):
         count = 0

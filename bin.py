@@ -60,14 +60,21 @@ class GUI:
             for box in row:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if box[0].collidepoint(event.pos):
-                        print('a')
-                        self.field.onclick(box[1], box[2])
+                        if event.button == 1:
+                            print('a')
+                            self.field.onclick(box[1], box[2])
+                        elif event.button == 3:
+                            self.field.lock(box[1], box[2])
+                            print('b')
 
     def draw(self):
         for row in self.boxes:
             for tup in row:
                 if self.field.board[tup[1]][tup[2]][1] == 0:
-                    pg.draw.rect(self.grid, (200, 200, 200), tup[0])
+                    if self.field.board[tup[1]][tup[2]][2] == 1:
+                        pg.draw.rect(self.grid, (20, 200, 20), tup[0])
+                    else:
+                        pg.draw.rect(self.grid, (200, 200, 200), tup[0])
                 elif self.field.board[tup[1]][tup[2]][1] == 1:
                     self.grid.blit(self.font.render(
                         str(self.field.board[tup[1]][tup[2]][0]),
