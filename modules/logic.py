@@ -35,28 +35,42 @@ class mine_field:
             self.board[row][square] = (
                 self.board[row][square][0], self.board[row][square][1], 1)
 
-    def onclick(self, row, square):
-        if self.alive and self.board[row][square][1] == 0 and self.board[row][square][2] == 0:
-            self.board[row][square] = (self.board[row][square][0], 1, 1)
-            if self.board[row][square][0] == 'B':
-                self.boom()
-            elif self.board[row][square][0] == 0:
-                if row != 0:
-                    self.onclick(row-1, square)
-                if row != 15:
-                    self.onclick(row+1, square)
-                if square != 0:
-                    self.onclick(row, square-1)
-                if square != 29:
-                    self.onclick(row, square+1)
-                if row != 0 and square != 0:
-                    self.onclick(row-1, square-1)
-                if row != 15 and square != 0:
-                    self.onclick(row+1, square-1)
-                if row != 0 and square != 29:
-                    self.onclick(row-1, square+1)
-                if row != 15 and square != 29:
-                    self.onclick(row+1, square+1)
+    def _massclick(self, row, square, limit=False):
+        if row != 0:
+            self.onclick(row-1, square, limit=limit)
+        if row != 15:
+            self.onclick(row+1, square, limit=limit)
+        if square != 0:
+            self.onclick(row, square-1, limit=limit)
+        if square != 29:
+            self.onclick(row, square+1, limit=limit)
+        if row != 0 and square != 0:
+            self.onclick(row-1, square-1, limit=limit)
+        if row != 15 and square != 0:
+            self.onclick(row+1, square-1, limit=limit)
+        if row != 0 and square != 29:
+            self.onclick(row-1, square+1, limit=limit)
+        if row != 15 and square != 29:
+            self.onclick(row+1, square+1, limit=limit)
+
+    def onclick(self, row, square, limit=False):
+        if self.alive:
+            print(self.board[row][square][0])
+            if self.board[row][square][1] == 0 and self.board[row][square][2] == 0:
+                self.board[row][square] = (self.board[row][square][0], 1, 0)
+                if self.board[row][square][0] == 'B':
+                    self.boom()
+                elif self.board[row][square][0] == 0:
+                    self._massclick(row, square)
+            elif self.board[row][square][1] == 1 and self.board[row][square][0] != 0 and not limit:
+                locked = self.counter(row, square, location=2, value=1)
+                if locked == self.board[row][square][0]:
+                    unopened = self.counter(
+                        row, square, location=1, value=0) - locked
+                    print('up', unopened)
+                    if unopened > 0:
+                        self._massclick(row, square, limit=True)
+        return
 
     def mines(self):
         n = 99
@@ -71,24 +85,24 @@ class mine_field:
         for row in range(16):
             for cell in range(30):
                 if self.board[row][cell][0] == 0:
-                    self.board[row][cell] = (self.count_bombs(row, cell), 0, 0)
+                    self.board[row][cell] = (self.counter(row, cell), 0, 0)
 
-    def count_bombs(self, row, cell):
+    def counter(self, row, cell, location=0, value='B'):
         count = 0
-        if row != 0 and self.board[row-1][cell][0] == 'B':
+        if row != 0 and self.board[row-1][cell][location] == value:
             count += 1
-        if row != 15 and self.board[row+1][cell][0] == 'B':
+        if row != 15 and self.board[row+1][cell][location] == value:
             count += 1
-        if cell != 0 and self.board[row][cell-1][0] == 'B':
+        if cell != 0 and self.board[row][cell-1][location] == value:
             count += 1
-        if cell != 29 and self.board[row][cell+1][0] == 'B':
+        if cell != 29 and self.board[row][cell+1][location] == value:
             count += 1
-        if row != 0 and cell != 0 and self.board[row-1][cell-1][0] == 'B':
+        if row != 0 and cell != 0 and self.board[row-1][cell-1][location] == value:
             count += 1
-        if row != 15 and cell != 0 and self.board[row+1][cell-1][0] == 'B':
+        if row != 15 and cell != 0 and self.board[row+1][cell-1][location] == value:
             count += 1
-        if row != 0 and cell != 29 and self.board[row-1][cell+1][0] == 'B':
+        if row != 0 and cell != 29 and self.board[row-1][cell+1][location] == value:
             count += 1
-        if row != 15 and cell != 29 and self.board[row+1][cell+1][0] == 'B':
+        if row != 15 and cell != 29 and self.board[row+1][cell+1][location] == value:
             count += 1
         return count

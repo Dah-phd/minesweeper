@@ -46,6 +46,7 @@ class GUI:
             self.draw()
             if not self.field.alive:
                 self.end()
+                return
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     return
@@ -54,6 +55,13 @@ class GUI:
 
     def end(self):
         self.setup()
+        # while True:
+        #     for event in pg.event.get():
+        #         if event.type == pg.QUIT:
+        #             break
+        #         if pg.key.get_pressed()[pg.K_RETURN]:
+        #             self.setup()
+        #             break
 
     def controls(self, event):
         for row in self.boxes:
@@ -61,11 +69,9 @@ class GUI:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     if box[0].collidepoint(event.pos):
                         if event.button == 1:
-                            print('a')
                             self.field.onclick(box[1], box[2])
                         elif event.button == 3:
                             self.field.lock(box[1], box[2])
-                            print('b')
 
     def draw(self):
         for row in self.boxes:
@@ -75,11 +81,11 @@ class GUI:
                         pg.draw.rect(self.grid, (20, 200, 20), tup[0])
                     else:
                         pg.draw.rect(self.grid, (200, 200, 200), tup[0])
-                elif self.field.board[tup[1]][tup[2]][1] == 1:
+                elif self.field.board[tup[1]][tup[2]][1] == 1 and self.field.board[tup[1]][tup[2]][0] != 0:
                     self.grid.blit(self.font.render(
                         str(self.field.board[tup[1]][tup[2]][0]),
                         True, (255, 255, 255)),
-                        (tup[0].x+5, tup[0].y))
+                        (tup[0].x+10, tup[0].y))
 
 
 if __name__ == '__main__':
