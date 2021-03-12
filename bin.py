@@ -8,7 +8,7 @@ class GUI:
         self.box_side = box_side
         self.grid = pg.display.set_mode((30*box_side, 16*box_side+50))
         pg.display.set_caption('Minefield, by Dah')
-        self.font = pg.font.SysFont('Times New Roman', 33)
+        self.font = pg.font.SysFont('Courier New', 33, 'Bold')
         self.setup()
 
     def setup(self):
@@ -54,14 +54,20 @@ class GUI:
             pg.display.update()
 
     def end(self):
-        self.setup()
-        # while True:
-        #     for event in pg.event.get():
-        #         if event.type == pg.QUIT:
-        #             break
-        #         if pg.key.get_pressed()[pg.K_RETURN]:
-        #             self.setup()
-        #             break
+        self.grid.blit(self.font.render(
+            "GAME OVER", True, (200, 50, 50)), (200, 200))
+        self.grid.blit(self.font.render(
+            "Press enter for new game or ESC to QUIT", True, (200, 50, 50)), (200, 300))
+        pg.display.update()
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    return
+            if pg.key.get_pressed()[pg.K_RETURN]:
+                self.reset()
+                return
+            if pg.key.get_pressed()[pg.K_RETURN]:
+                return
 
     def controls(self, event):
         for row in self.boxes:
@@ -84,8 +90,11 @@ class GUI:
                 elif self.field.board[tup[1]][tup[2]][1] == 1 and self.field.board[tup[1]][tup[2]][0] != 0:
                     self.grid.blit(self.font.render(
                         str(self.field.board[tup[1]][tup[2]][0]),
-                        True, (255, 255, 255)),
+                        False, (30, 220, 30)),
                         (tup[0].x+10, tup[0].y))
+
+    def timer(self):
+        pass
 
 
 if __name__ == '__main__':

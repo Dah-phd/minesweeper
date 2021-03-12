@@ -7,6 +7,7 @@ class mine_field:
 
     def reset(self):
         self.alive = True
+        self.win = False
         self.board = [[(0, 0, 0) for _ in range(30)] for _ in range(16)]
         self.mines()
         self.add_numbers()
@@ -35,6 +36,14 @@ class mine_field:
             self.board[row][square] = (
                 self.board[row][square][0], self.board[row][square][1], 1)
 
+    def ifwin(self):
+        for n_row in range(16):
+            for n_sq in range(30):
+                if self.board[n_row][n_sq][0] != 'B' and self.board[n_row][n_sq][1] == 0:
+                    return
+        self.win = True
+        return
+
     def _massclick(self, row, square, limit=False):
         if row != 0:
             self.onclick(row-1, square, limit=limit)
@@ -55,9 +64,9 @@ class mine_field:
 
     def onclick(self, row, square, limit=False):
         if self.alive:
-            print(self.board[row][square][0])
             if self.board[row][square][1] == 0 and self.board[row][square][2] == 0:
                 self.board[row][square] = (self.board[row][square][0], 1, 0)
+                self.ifwin()
                 if self.board[row][square][0] == 'B':
                     self.boom()
                 elif self.board[row][square][0] == 0:
@@ -65,10 +74,7 @@ class mine_field:
             elif self.board[row][square][1] == 1 and self.board[row][square][0] != 0 and not limit:
                 locked = self.counter(row, square, location=2, value=1)
                 if locked == self.board[row][square][0]:
-                    unopened = self.counter(
-                        row, square, location=1, value=0) - locked
-                    print('up', unopened)
-                    if unopened > 0:
+                    if self.counter(row, square, location=1, value=0) - locked > 0:
                         self._massclick(row, square, limit=True)
         return
 
