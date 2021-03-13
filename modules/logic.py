@@ -25,8 +25,8 @@ class mine_field:
         self.alive = False
         for n_row in range(16):
             for n_sq in range(30):
-                if self.board[n_row][n_sq][0] == 'B':
-                    self.board[n_row][n_sq] = ('B', 1, 0)
+                if self.board[n_row][n_sq][0] == 'M':
+                    self.board[n_row][n_sq] = ('M', 1, 0)
 
     def lock(self, row, square):
         if self.board[row][square][2] == 1:
@@ -39,7 +39,7 @@ class mine_field:
     def ifwin(self):
         for n_row in range(16):
             for n_sq in range(30):
-                if self.board[n_row][n_sq][0] != 'B' and self.board[n_row][n_sq][1] == 0:
+                if self.board[n_row][n_sq][0] != 'M' and self.board[n_row][n_sq][1] == 0:
                     return
         self.win = True
         return
@@ -66,8 +66,7 @@ class mine_field:
         if self.alive:
             if self.board[row][square][1] == 0 and self.board[row][square][2] == 0:
                 self.board[row][square] = (self.board[row][square][0], 1, 0)
-                self.ifwin()
-                if self.board[row][square][0] == 'B':
+                if self.board[row][square][0] == 'M':
                     self.boom()
                 elif self.board[row][square][0] == 0:
                     self._massclick(row, square)
@@ -84,7 +83,7 @@ class mine_field:
             row = random.randint(0, 15)
             col = random.randint(0, 29)
             if self.board[row][col][0] == 0:
-                self.board[row][col] = ('B', 0, 0)
+                self.board[row][col] = ('M', 0, 0)
                 n -= 1
 
     def add_numbers(self):
@@ -93,7 +92,7 @@ class mine_field:
                 if self.board[row][cell][0] == 0:
                     self.board[row][cell] = (self.counter(row, cell), 0, 0)
 
-    def counter(self, row, cell, location=0, value='B'):
+    def counter(self, row, cell, location=0, value='M'):
         count = 0
         if row != 0 and self.board[row-1][cell][location] == value:
             count += 1
