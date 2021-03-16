@@ -29,12 +29,13 @@ class mine_field:
                     self.board[n_row][n_sq] = ('M', 1, 0)
 
     def lock(self, row, square):
-        if self.board[row][square][2] == 1:
-            self.board[row][square] = (
-                self.board[row][square][0], self.board[row][square][1], 0)
-        else:
-            self.board[row][square] = (
-                self.board[row][square][0], self.board[row][square][1], 1)
+        if self.board[row][square][1] == 0:
+            if self.board[row][square][2] == 1:
+                self.board[row][square] = (
+                    self.board[row][square][0], 0, 0)
+            else:
+                self.board[row][square] = (
+                    self.board[row][square][0], 0, 1)
 
     def ifwin(self):
         for n_row in range(16):
